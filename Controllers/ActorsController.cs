@@ -47,7 +47,7 @@ namespace NETCoreMoviesAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(ActorCreationDto actorCreationDto)
+        public async Task<ActionResult> Post([FromForm] ActorCreationDto actorCreationDto)
         {
             var actor = _mapper.Map<Actor>(actorCreationDto);
 

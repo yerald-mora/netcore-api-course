@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace NETCoreMoviesAPI.Dtos
         [StringLength(120)]
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public IFormFile Photo { get; set; }
     }
 }
