@@ -14,6 +14,9 @@ namespace NETCoreMoviesAPI.Helpers
         {
             CreateMap<Genre, GenreDto>().ReverseMap();
             CreateMap<GenreCreationDto,Genre>();
+
+            CreateMap<Actor,ActorDto>().ReverseMap();
+            CreateMap<ActorCreationDto, Actor>();
         }
     }
 }
