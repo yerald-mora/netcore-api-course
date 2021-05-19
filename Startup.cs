@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NETCoreMoviesAPI.Models;
+using NETCoreMoviesAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,10 +31,13 @@ namespace NETCoreMoviesAPI
         {
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddTransient<IFileStorage, AzureFileStorage>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NETCoreMoviesAPI", Version = "v1" });
