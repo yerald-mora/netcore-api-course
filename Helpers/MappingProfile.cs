@@ -18,6 +18,8 @@ namespace NETCoreMoviesAPI.Helpers
             CreateMap<Actor,ActorDto>().ReverseMap();
             CreateMap<ActorCreationDto, Actor>()
                 .ForMember(x => x.Photo, opt => opt.Ignore());
+
+            CreateMap<Actor, ActorPatchDto>().ReverseMap();
         }
     }
 }

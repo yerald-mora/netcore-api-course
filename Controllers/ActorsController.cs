@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NETCoreMoviesAPI.Dtos;
@@ -97,6 +98,35 @@ namespace NETCoreMoviesAPI.Controllers
                     actor.Photo = await _fileStorage.EditFile(content, extension, _container, actor.Photo,actorCreationDto.Photo.ContentType);
                 }
             }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<ActorPatchDto> patchDocument)
+        {
+            if(patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var actor = await _context.Actors.FindAsync(id);
+
+            if (actor == null)
+                return NotFound();
+
+            var actorPatchDto = _mapper.Map<ActorPatchDto>(actor);
+
+            patchDocument.ApplyTo(actorPatchDto, ModelState);
+
+            var isValid = TryValidateModel(actorPatchDto);
+
+            if (!isValid)
+                return BadRequest(ModelState);
+
+            _mapper.Map(actorPatchDto, actor);
 
             await _context.SaveChangesAsync();
 
