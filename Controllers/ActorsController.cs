@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NETCoreMoviesAPI.Dtos;
+using NETCoreMoviesAPI.Helpers;
 using NETCoreMoviesAPI.Models;
 using NETCoreMoviesAPI.Services;
 
@@ -31,9 +32,13 @@ namespace NETCoreMoviesAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ActorDto>>> Get()
+        public async Task<ActionResult<IEnumerable<ActorDto>>> Get([FromQuery] PaginationDto paginationDto)
         {
-            var actor = await _context.Actors.ToListAsync();
+            var query = _context.Actors.AsQueryable();
+
+            await HttpContext.InsertPaginationParameter(query, paginationDto.RecordsPerPage);
+
+            var actor = await query.Paginate(paginationDto).ToListAsync();
             var actorDtos = _mapper.Map<List<ActorDto>>(actor);
 
             return actorDtos;
