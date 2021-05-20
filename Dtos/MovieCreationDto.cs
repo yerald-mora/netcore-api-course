@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using NETCoreMoviesAPI.Helpers;
 using NETCoreMoviesAPI.Validations;
 using System;
 using System.Collections.Generic;
@@ -19,5 +21,11 @@ namespace NETCoreMoviesAPI.Dtos
         [FileSizeValidation(4)]
         [FileTypeValidation(FileTypeGroup.Image)]
         public IFormFile Poster { get; set; }
+        
+        [ModelBinder(BinderType = typeof(TypeBinder<List<int>>))]
+        public List<int> GenresId { get; set; }
+
+        [ModelBinder(BinderType = typeof(TypeBinder<List<ActorMoviesCreationDTO>>))]
+        public List<ActorMoviesCreationDTO> Actors { get; set; }
     }
 }

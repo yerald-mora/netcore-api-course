@@ -65,6 +65,7 @@ namespace NETCoreMoviesAPI.Controllers
                 }
             }
 
+            AssignActorsOrder(movie);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
@@ -73,10 +74,14 @@ namespace NETCoreMoviesAPI.Controllers
             return CreatedAtAction("Get", new { id = movie.Id }, movieDto);
         }
 
+        
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm]MovieCreationDto movieCreationDto)
         {
-            var movie = await _context.Movies.FirstOrDefaultAsync(a => a.Id == id);
+            var movie = await _context.Movies
+                .Include(m => m.Actors)
+                .Include(m => m.Genres)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (movie == null)
                 return NotFound();
@@ -95,10 +100,23 @@ namespace NETCoreMoviesAPI.Controllers
                 }
             }
 
+            AssignActorsOrder(movie);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private void AssignActorsOrder(Movie movie)
+        {
+            if (movie.Actors != null)
+            {
+                for (int i = 0; i < movie.Actors.Count; i++)
+                {
+                    movie.Actors[i].Order = i;
+                }
+            }
+        }
+
 
         [HttpPatch("{id}")]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<MoviePatchDto> patchDocument)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace NETCoreMoviesAPI.Models
@@ -11,6 +12,8 @@ namespace NETCoreMoviesAPI.Models
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Photo { get; set; }
+
+        public List<MoviesActors> Movies { get; set; }
 
     }
 }

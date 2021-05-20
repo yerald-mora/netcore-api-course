@@ -15,6 +15,8 @@ namespace NETCoreMoviesAPI.Models
         public bool InTheaters { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Poster { get; set; }
+        public List<MoviesGenres> Genres { get; set; }
+        public List<MoviesActors> Actors { get; set; }
 
     }
 }

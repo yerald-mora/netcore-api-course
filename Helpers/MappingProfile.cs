@@ -22,8 +22,41 @@ namespace NETCoreMoviesAPI.Helpers
 
             CreateMap<Movie, MovieDto>().ReverseMap();
             CreateMap<MovieCreationDto, Movie>()
-                .ForMember(x => x.Poster, opt => opt.Ignore());
+                .ForMember(x => x.Poster, opt => opt.Ignore())
+                .ForMember(x => x.Genres, opt => opt.MapFrom(MapMoviesGenres))
+                .ForMember(x => x.Actors, opt => opt.MapFrom(MapMoviesActors));
+
             CreateMap<Movie, MoviePatchDto>().ReverseMap();
+        }
+
+        private List<MoviesGenres> MapMoviesGenres(MovieCreationDto movieCreationDto, Movie movie)
+        {
+            var result = new List<MoviesGenres>();
+
+            if (movieCreationDto.GenresId == null)
+                return result;
+
+            foreach (var id in movieCreationDto.GenresId)
+            {
+                result.Add(new MoviesGenres() { GenreId = id });
+            }
+
+            return result;
+        }        
+        
+        private List<MoviesActors> MapMoviesActors(MovieCreationDto movieCreationDto, Movie movie)
+        {
+            var result = new List<MoviesActors>();
+
+            if (movieCreationDto.Actors == null)
+                return result;
+
+            foreach (var actor in movieCreationDto.Actors)
+            {
+                result.Add(new MoviesActors() { ActorId = actor.ActorId, Character = actor.Character});
+            }
+
+            return result;
         }
     }
 }
