@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NETCoreMoviesAPI.Models
 {
-    public class Genre
+    public class Genre : IIdentifier
     {
         public int Id { get; set; }
         

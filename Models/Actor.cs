@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NETCoreMoviesAPI.Models
 {
-    public class Actor
+    public class Actor : IIdentifier
     {
         public int Id { get; set; }
         [Required]
