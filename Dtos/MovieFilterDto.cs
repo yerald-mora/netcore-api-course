@@ -21,5 +21,7 @@ namespace NETCoreMoviesAPI.Dtos
         public int GenreId { get; set; }
         public bool InTheaters { get; set; }
         public bool NextReleases { get; set; }
+        public string OrderField { get; set; }
+        public bool AscOrder { get; set; }
     }
 }

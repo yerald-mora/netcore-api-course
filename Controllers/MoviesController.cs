@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace NETCoreMoviesAPI.Controllers
 {
@@ -75,6 +76,12 @@ namespace NETCoreMoviesAPI.Controllers
                                 .Select(g => g.GenreId)
                                 .Contains(movieFilterDto.GenreId)
                         );
+
+            if(!string.IsNullOrEmpty(movieFilterDto.OrderField))
+            {
+                string orderType = movieFilterDto.AscOrder ? "Ascending" : "Descending";
+                queryMovies = queryMovies.OrderBy($"{movieFilterDto.OrderField} {orderType}");
+            }
 
             await HttpContext.InsertPaginationParameter(queryMovies, movieFilterDto.RecordPerPage);
 
