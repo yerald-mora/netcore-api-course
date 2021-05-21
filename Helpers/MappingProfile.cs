@@ -23,8 +23,12 @@ namespace NETCoreMoviesAPI.Helpers
             CreateMap<Movie, MovieDto>().ReverseMap();
             CreateMap<MovieCreationDto, Movie>()
                 .ForMember(x => x.Poster, opt => opt.Ignore())
-                .ForMember(x => x.Genres, opt => opt.MapFrom(MapMoviesGenres))
-                .ForMember(x => x.Actors, opt => opt.MapFrom(MapMoviesActors));
+                .ForMember(x => x.MoviesGenres, opt => opt.MapFrom(MapMoviesGenres))
+                .ForMember(x => x.MoviesActors, opt => opt.MapFrom(MapMoviesActors));
+
+            CreateMap<Movie, MoviesDetailsDto>()
+                .ForMember(g => g.Genres, opt => opt.MapFrom(MapMoviesGenres))
+                .ForMember(a => a.Actors, opt => opt.MapFrom(MapMoviesActors));
 
             CreateMap<Movie, MoviePatchDto>().ReverseMap();
         }
@@ -58,5 +62,40 @@ namespace NETCoreMoviesAPI.Helpers
 
             return result;
         }
+    
+        private List<GenreDto> MapMoviesGenres(Movie movie,MoviesDetailsDto moviesDetailsDto)
+        {
+            var result = new List<GenreDto>();
+
+            if (movie.MoviesGenres == null)
+                return result;
+
+            foreach (var genre in movie.MoviesGenres)
+            {
+                result.Add(new GenreDto { Id = genre.Genre.Id, Name = genre.Genre.Name });
+            }
+
+            return result;
+        }    
+        private List<ActorMovieDetailsDto> MapMoviesActors(Movie movie, MoviesDetailsDto moviesDetailsDto)
+        {
+            var result = new List<ActorMovieDetailsDto>();
+
+            if (movie.MoviesActors == null)
+                return result;
+
+            foreach (var actors in movie.MoviesActors)
+            {
+                result.Add(new ActorMovieDetailsDto
+                {
+                    ActorId = actors.Actor.Id,
+                    Character = actors.Character,
+                    Name = actors.Actor.Name
+                });
+            }
+
+            return result;
+        }
+
     }
 }

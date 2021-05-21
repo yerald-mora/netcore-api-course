@@ -71,7 +71,7 @@ namespace NETCoreMoviesAPI.Controllers
 
             if (movieFilterDto.GenreId != 0)
                 queryMovies = queryMovies
-                    .Where(m => m.Genres
+                    .Where(m => m.MoviesGenres
                                 .Select(g => g.GenreId)
                                 .Contains(movieFilterDto.GenreId)
                         );
@@ -84,14 +84,19 @@ namespace NETCoreMoviesAPI.Controllers
         }
 
         [HttpGet("{id}", Name = "GetMovie")]
-        public async Task<ActionResult<MovieDto>> Get(int id)
+        public async Task<ActionResult<MoviesDetailsDto>> Get(int id)
         {
-            var Movie = await _context.Movies.FindAsync(id);
+            var Movie = await _context.Movies
+                .Include(m=>m.MoviesGenres).ThenInclude(g=>g.Genre)
+                .Include(m=>m.MoviesActors).ThenInclude(a=>a.Actor)
+                .FirstOrDefaultAsync(m=>m.Id == id);
 
             if (Movie == null)
                 return NotFound();
 
-            return _mapper.Map<MovieDto>(Movie);
+            Movie.MoviesActors = Movie.MoviesActors.OrderBy(a => a.Order).ToList();
+
+            return _mapper.Map<MoviesDetailsDto>(Movie);
         }
 
         [HttpPost]
@@ -125,8 +130,8 @@ namespace NETCoreMoviesAPI.Controllers
         public async Task<ActionResult> Put(int id, [FromForm]MovieCreationDto movieCreationDto)
         {
             var movie = await _context.Movies
-                .Include(m => m.Actors)
-                .Include(m => m.Genres)
+                .Include(m => m.MoviesActors)
+                .Include(m => m.MoviesGenres)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (movie == null)
@@ -154,11 +159,11 @@ namespace NETCoreMoviesAPI.Controllers
 
         private void AssignActorsOrder(Movie movie)
         {
-            if (movie.Actors != null)
+            if (movie.MoviesActors != null)
             {
-                for (int i = 0; i < movie.Actors.Count; i++)
+                for (int i = 0; i < movie.MoviesActors.Count; i++)
                 {
-                    movie.Actors[i].Order = i;
+                    movie.MoviesActors[i].Order = i;
                 }
             }
         }
