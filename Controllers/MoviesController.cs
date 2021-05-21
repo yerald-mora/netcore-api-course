@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NETCoreMoviesAPI.Dtos;
+using NETCoreMoviesAPI.Helpers;
 using NETCoreMoviesAPI.Models;
 using NETCoreMoviesAPI.Services;
 using System;
@@ -29,12 +30,57 @@ namespace NETCoreMoviesAPI.Controllers
             _fileStorage = fileStorage;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDto>>> Get()
+        public async Task<ActionResult<MoviesIndexDto>> Get()
         {
-            var Movies = await _context.Movies.ToListAsync();
-            var MovieDtos = _mapper.Map<List<MovieDto>>(Movies);
+            int topMovies = 5;
 
-            return MovieDtos;
+            var nextReleases = await _context.Movies
+                .Where(m => m.ReleaseDate > DateTime.Today)
+                .OrderBy(m => m.ReleaseDate)
+                .Take(topMovies)
+                .ToListAsync();
+
+            var inTheaters = await _context.Movies
+                .Where(m => m.InTheaters)
+                .Take(topMovies)
+                .ToListAsync();
+
+            var moviesIndexDto = new MoviesIndexDto()
+            {
+                NextReleases = _mapper.Map<IEnumerable<MovieDto>>(nextReleases),
+                InTheaters = _mapper.Map<IEnumerable<MovieDto>>(inTheaters)
+            };
+
+            return moviesIndexDto;
+        }
+        
+        
+        [HttpGet("Filter")]
+        public async Task<ActionResult<IEnumerable<MovieDto>>> Filter([FromQuery] MovieFilterDto movieFilterDto)
+        {
+            var queryMovies = _context.Movies.AsQueryable();
+
+            if (!string.IsNullOrEmpty(movieFilterDto.Title))
+                queryMovies = queryMovies.Where(m => m.Title.Contains(movieFilterDto.Title));
+
+            if (movieFilterDto.InTheaters)
+                queryMovies = queryMovies.Where(m => m.InTheaters);
+
+            if (movieFilterDto.NextReleases)
+                queryMovies = queryMovies.Where(m => m.ReleaseDate > DateTime.Today);
+
+            if (movieFilterDto.GenreId != 0)
+                queryMovies = queryMovies
+                    .Where(m => m.Genres
+                                .Select(g => g.GenreId)
+                                .Contains(movieFilterDto.GenreId)
+                        );
+
+            await HttpContext.InsertPaginationParameter(queryMovies, movieFilterDto.RecordPerPage);
+
+            var movies = await queryMovies.Paginate(movieFilterDto.Pagination).ToListAsync();
+
+            return _mapper.Map<List<MovieDto>>(movies);
         }
 
         [HttpGet("{id}", Name = "GetMovie")]

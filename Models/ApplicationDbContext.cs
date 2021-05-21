@@ -28,7 +28,7 @@ namespace NETCoreMoviesAPI.Models
             mb.Entity<MoviesActors>()
                 .HasKey(ma => new { ma.ActorId, ma.MovieId });
 
-            SeedData(mb);
+            SeedData(mb); 
 
             base.OnModelCreating(mb); 
         }
