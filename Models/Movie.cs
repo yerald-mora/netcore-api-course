@@ -17,6 +17,7 @@ namespace NETCoreMoviesAPI.Models
         public string Poster { get; set; }
         public List<MoviesGenres> MoviesGenres { get; set; }
         public List<MoviesActors> MoviesActors { get; set; }
+        public List<MoviesTheaters> MoviesTheaters { get; set; }
 
     }
 }

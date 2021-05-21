@@ -13,6 +13,8 @@ namespace NETCoreMoviesAPI.Models
         public DbSet<Movie> Movies { get; set; }
         public DbSet<MoviesGenres> MoviesGenres { get; set; }
         public DbSet<MoviesActors> MoviesActors { get; set; }
+        public DbSet<Theater> Theaters { get; set; }
+        public DbSet<MoviesTheaters> MoviesTheaters { get; set; }
 
         public ApplicationDbContext(DbContextOptions options)
             :base(options)
@@ -27,6 +29,9 @@ namespace NETCoreMoviesAPI.Models
 
             mb.Entity<MoviesActors>()
                 .HasKey(ma => new { ma.ActorId, ma.MovieId });
+
+            mb.Entity<MoviesTheaters>()
+                .HasKey(mt => new { mt.TheaterId, mt.MovieId });
 
             SeedData(mb); 
 
