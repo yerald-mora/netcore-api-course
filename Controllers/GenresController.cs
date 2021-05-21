@@ -47,7 +47,7 @@ namespace NETCoreMoviesAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            return await Delete<Genre, GenreDto>(id);
+            return await Delete<Genre>(id);
         }
     }
 }

@@ -17,14 +17,15 @@ namespace NETCoreMoviesAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MoviesController: ControllerBase
+    public class MoviesController: CustomBaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
         private readonly string _container ="movies";
 
-        public MoviesController(ApplicationDbContext context, IMapper mapper, IFileStorage fileStorage)
+        public MoviesController(ApplicationDbContext context, IMapper mapper, IFileStorage fileStorage):
+            base(context, mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -131,7 +132,6 @@ namespace NETCoreMoviesAPI.Controllers
 
             return CreatedAtAction("Get", new { id = movie.Id }, movieDto);
         }
-
         
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm]MovieCreationDto movieCreationDto)
@@ -179,47 +179,14 @@ namespace NETCoreMoviesAPI.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<MoviePatchDto> patchDocument)
         {
-            if (patchDocument == null)
-            {
-                return BadRequest();
-            }
-
-            var movie = await _context.Movies.FindAsync(id);
-
-            if (movie == null)
-                return NotFound();
-
-            var moviePatchDto = _mapper.Map<MoviePatchDto>(movie);
-
-            patchDocument.ApplyTo(moviePatchDto, ModelState);
-
-            var isValid = TryValidateModel(moviePatchDto);
-
-            if (!isValid)
-                return BadRequest(ModelState);
-
-            _mapper.Map(moviePatchDto, movie);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return await Patch<Movie, MoviePatchDto>(id,patchDocument);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            if (!MovieExists(id))
-                return NotFound();
-
-            _context.Remove(new Movie() { Id = id });
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return await Delete<Movie>(id);
         }
 
-        private bool MovieExists(int id)
-        {
-            return _context.Movies.Any(e => e.Id == id);
-        }
     }
 }

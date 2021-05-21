@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NETCoreMoviesAPI.Dtos;
+using NETCoreMoviesAPI.Helpers;
 using NETCoreMoviesAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -35,6 +38,18 @@ namespace NETCoreMoviesAPI.Controllers
             return (model == null) ? NotFound() : _mapper.Map<TDto>(model);
         }
 
+        protected async Task<List<TDto>> Get<TModel, TDto>(PaginationDto paginationDto) where TModel : class 
+        {
+            var query = _context.Set<TModel>().AsQueryable();
+
+            await HttpContext.InsertPaginationParameter(query, paginationDto.RecordsPerPage);
+            
+            var models = await query.Paginate(paginationDto).ToListAsync();
+            var dtos = _mapper.Map<List<TDto>>(models);
+
+            return dtos;
+        }
+
         protected async Task<ActionResult> Post<TCreationDto,TModel, TDto>(TCreationDto creationDto,string actionName) where TModel : class,IIdentifier
         {
             var model = _mapper.Map<TModel>(creationDto);
@@ -58,7 +73,36 @@ namespace NETCoreMoviesAPI.Controllers
             return NoContent();
         }
 
-        protected async Task<ActionResult> Delete<TModel, TDto>(int id) where TModel : class, IIdentifier, new()
+        protected async Task<ActionResult> Patch<TModel,TDto>(int id, JsonPatchDocument<TDto> patchDocument) where TModel: class, IIdentifier
+          where TDto: class
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var model = await _context.Set<TModel>().FindAsync(id);
+
+            if (model == null)
+                return NotFound();
+
+            var modelPatchDto = _mapper.Map<TDto>(model);
+
+            patchDocument.ApplyTo(modelPatchDto, ModelState);
+
+            var isValid = TryValidateModel(modelPatchDto);
+
+            if (!isValid)
+                return BadRequest(ModelState);
+
+            _mapper.Map(modelPatchDto, model);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        protected async Task<ActionResult> Delete<TModel>(int id) where TModel : class, IIdentifier, new()
         {
             if (!TModelExists<TModel>(id))
                 return NotFound();
