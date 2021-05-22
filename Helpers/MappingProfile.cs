@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using NETCoreMoviesAPI.Dtos;
 using NETCoreMoviesAPI.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +12,20 @@ namespace NETCoreMoviesAPI.Helpers
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile()
+        public MappingProfile(GeometryFactory geometryFactory)
         {
             CreateMap<Genre, GenreDto>().ReverseMap();
             CreateMap<GenreCreationDto,Genre>();
 
-            CreateMap<Theater, TheaterDto>().ReverseMap();
-            CreateMap<TheaterCreationDto, Theater>();
+            CreateMap<Theater, TheaterDto>()
+                .ForMember(tdto => tdto.Latitude, tdto => tdto.MapFrom(t => t.Location.Y))
+                .ForMember(tdto => tdto.Longitude, tdto => tdto.MapFrom(t => t.Location.X));
+
+            CreateMap<TheaterDto, Theater>()
+                .ForMember(t => t.Location, t => t.MapFrom(tdto => geometryFactory.CreatePoint(new Coordinate(tdto.Longitude, tdto.Latitude))));
+
+            CreateMap<TheaterCreationDto, Theater>()
+                .ForMember(t => t.Location, t => t.MapFrom(tdto => geometryFactory.CreatePoint(new Coordinate(tdto.Longitude, tdto.Latitude))));
 
             CreateMap<Actor,ActorDto>().ReverseMap();
             CreateMap<ActorCreationDto, Actor>()
