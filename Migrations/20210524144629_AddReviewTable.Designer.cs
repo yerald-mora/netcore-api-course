@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NETCoreMoviesAPI.Models;
 using NetTopologySuite.Geometries;
@@ -10,9 +11,10 @@ using NetTopologySuite.Geometries;
 namespace NETCoreMoviesAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210524144629_AddReviewTable")]
+    partial class AddReviewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace NETCoreMoviesAPI.Migrations
                         new
                         {
                             Id = "735217af-72b5-4a8b-92b7-efe779101f16",
-                            ConcurrencyStamp = "7fd1b9d7-176e-4787-a13d-943a855f1e4a",
+                            ConcurrencyStamp = "291467ac-2287-47b0-a988-6a10b59a5466",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         });
@@ -149,15 +151,15 @@ namespace NETCoreMoviesAPI.Migrations
                         {
                             Id = "4d686c30-d6af-4d54-b69e-8bc516219f86",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5b461143-9bd6-430e-b142-deb1d49f2922",
+                            ConcurrencyStamp = "e693bc0b-4fc7-41f0-ade6-5a9ca6943a3f",
                             Email = "ymora@hotmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ymora@hotmail.com",
                             NormalizedUserName = "ymora@hotmail.com",
-                            PasswordHash = "AQAAAAEAACcQAAAAEA667GlWNqFQ2aRXnkOx8krl19SopQtlaX7yCnA8WpvdatWdW4XoXhLm4aqtBkvMSw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKyD5TpR7A4DW2jE+kzzq3XszeTSTm11/Hu3W+VYI+C0kuPl0AbEGELHUetDXbvPMQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0356a42b-813e-4b29-9eb0-24b398993a4f",
+                            SecurityStamp = "376acb9f-9a0a-4398-9c12-948aab2cf86e",
                             TwoFactorEnabled = false,
                             UserName = "ymora@hotmail.com"
                         });
@@ -539,8 +541,8 @@ namespace NETCoreMoviesAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Commentary")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Commentary")
+                        .HasColumnType("int");
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");

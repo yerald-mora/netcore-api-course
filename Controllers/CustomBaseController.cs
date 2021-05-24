@@ -42,6 +42,11 @@ namespace NETCoreMoviesAPI.Controllers
         {
             var query = _context.Set<TModel>().AsQueryable();
 
+            return await Get<TModel, TDto>(paginationDto, query);
+        }        
+        
+        protected async Task<List<TDto>> Get<TModel, TDto>(PaginationDto paginationDto,IQueryable<TModel> query) where TModel : class 
+        {
             await HttpContext.InsertPaginationParameter(query, paginationDto.RecordsPerPage);
             
             var models = await query.Paginate(paginationDto).ToListAsync();

@@ -43,6 +43,8 @@ namespace NETCoreMoviesAPI
 
             services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
+            services.AddScoped<MovieExistsAttribute>();
+
             services.AddSingleton(p =>
                 new MapperConfiguration(config =>
                 {

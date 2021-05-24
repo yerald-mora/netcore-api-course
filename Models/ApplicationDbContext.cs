@@ -18,6 +18,7 @@ namespace NETCoreMoviesAPI.Models
         public DbSet<MoviesActors> MoviesActors { get; set; }
         public DbSet<Theater> Theaters { get; set; }
         public DbSet<MoviesTheaters> MoviesTheaters { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         public ApplicationDbContext(DbContextOptions options)
             :base(options)

@@ -18,6 +18,12 @@ namespace NETCoreMoviesAPI.Helpers
             CreateMap<Genre, GenreDto>().ReverseMap();
             CreateMap<GenreCreationDto,Genre>();
 
+            CreateMap<Review, ReviewDto>()
+                .ForMember(rdto => rdto.UserName, r => r.MapFrom(r => r.User.UserName));
+
+            CreateMap<ReviewDto,Review >();
+            CreateMap<ReviewCreationDto,Review >();
+
             CreateMap<IdentityUser, UserDto>();
 
             CreateMap<Theater, TheaterDto>()
