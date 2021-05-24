@@ -1,12 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace NETCoreMoviesAPI.Models
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Actor> Actors { get; set; }
@@ -40,6 +43,44 @@ namespace NETCoreMoviesAPI.Models
 
         private void SeedData(ModelBuilder modelBuilder)
         {
+            var rolAdminId = "735217af-72b5-4a8b-92b7-efe779101f16";
+            var userAdminId = "4d686c30-d6af-4d54-b69e-8bc516219f86";
+
+            var rolAdmin = new IdentityRole()
+            {
+                Id = rolAdminId,
+                Name = "Admin",
+                NormalizedName = "Admin"
+            };
+
+            var passHasher = new PasswordHasher<IdentityUser>();
+
+            var adminUser = new IdentityUser()
+            {
+                Id = userAdminId,
+                UserName = "ymora@hotmail.com",
+                NormalizedUserName = "ymora@hotmail.com",
+                Email = "ymora@hotmail.com",
+                NormalizedEmail = "ymora@hotmail.com",
+                PasswordHash = passHasher.HashPassword(null,"Facil.123456!")
+            };
+
+            modelBuilder.Entity<IdentityUser>()
+                .HasData(adminUser);
+
+            modelBuilder.Entity<IdentityRole>()
+                .HasData(rolAdmin);
+
+            modelBuilder.Entity<IdentityUserClaim<string>>()
+                .HasData(new IdentityUserClaim<string>()
+                {
+                    Id = 1,
+                    ClaimType = ClaimTypes.Role,
+                    UserId = userAdminId,
+                    ClaimValue = "Admin"
+                }
+                );
+
             var aventura = new Genre() { Id = 4, Name = "Aventura" };
             var animation = new Genre() { Id = 5, Name = "Animación" };
             var suspenso = new Genre() { Id = 6, Name = "Suspenso" };

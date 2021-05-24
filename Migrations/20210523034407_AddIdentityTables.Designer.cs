@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NETCoreMoviesAPI.Models;
 using NetTopologySuite.Geometries;
@@ -10,9 +11,10 @@ using NetTopologySuite.Geometries;
 namespace NETCoreMoviesAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210523034407_AddIdentityTables")]
+    partial class AddIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,15 +47,6 @@ namespace NETCoreMoviesAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "735217af-72b5-4a8b-92b7-efe779101f16",
-                            ConcurrencyStamp = "3682c3d0-45e3-4dc1-baad-07a6cf8be0bc",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -143,24 +136,6 @@ namespace NETCoreMoviesAPI.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "4d686c30-d6af-4d54-b69e-8bc516219f86",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "6b34e49b-09f6-4fd0-ba9d-5baed11da31d",
-                            Email = "ymora@hotmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ymora@hotmail.com",
-                            NormalizedUserName = "ymora@hotmail.com",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDA9E+aQmzEIaDe5z61OJgwtv+TFEkFV80XXBEmyLpj0nXredNpypOz7ceECkkq2jA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "0e6e9c88-97c3-4619-a210-6ab0fd054745",
-                            TwoFactorEnabled = false,
-                            UserName = "ymora@hotmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -185,15 +160,6 @@ namespace NETCoreMoviesAPI.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                            ClaimValue = "Admin",
-                            UserId = "4d686c30-d6af-4d54-b69e-8bc516219f86"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
